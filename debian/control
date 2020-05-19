@@ -1,0 +1,50 @@
+Source: xfonts-efont-unicode
+Section: fonts
+Priority: optional
+Maintainer: Debian Fonts Task Force <pkg-fonts-devel@lists.alioth.debian.org>
+Uploaders: Hideki Yamane <henrich@debian.org>
+Build-Depends: debhelper-compat (= 13), libarray-base-perl,
+Build-Depends-Indep: bdfresize (>= 1.4), xfonts-utils, gawk
+Standards-Version: 4.5.0
+Homepage: http://openlab.ring.gr.jp/efont/unicode/
+Vcs-Git: https://salsa.debian.org/fonts-team/xfonts-efont-unicode.git
+Vcs-Browser: https://salsa.debian.org/fonts-team/xfonts-efont-unicode
+Rules-Requires-Root: no
+
+Package: xfonts-efont-unicode
+Architecture: all
+Pre-Depends: dpkg (>= 1.15.6~)
+Depends: ${misc:Depends}
+Multi-Arch: foreign
+Suggests: xserver
+Recommends: xfonts-efont-unicode-ib
+Description: /efont/ Unicode fonts for X which cover various scripts
+ /efont/ is an X BDF font package for 10, 12, 14, 16, and 24 pixels
+ which are encoded in Unicode.  Though they are still under development,
+ they contain various scripts including Latin, IPA, Greek, Cyrillic,
+ Armenian, Hebrew, Devanagari, Thai, Lao, Georgian, Runic, Hiragana,
+ Katakana, Hangul Syllables, and part of Arabic, Bopomofo, CJK Ideogram,
+ and various symbols.
+ .
+ This package contains normal (non-italic, medium) fonts only.
+ xfonts-efont-unicode-ib package is available for italic and bold
+ fonts.
+
+Package: xfonts-efont-unicode-ib
+Architecture: all
+Pre-Depends: dpkg (>= 1.15.6~)
+Depends: ${misc:Depends}
+Multi-Arch: foreign
+Suggests: xserver
+Recommends: xfonts-efont-unicode
+Description: /efont/ Unicode fonts for X (italic and bold)
+ /efont/ is an X BDF font package for 10, 12, 14, 16, and 24 pixels
+ which are encoded in Unicode.  Though they are still under development,
+ they contain various scripts including Latin, IPA, Greek, Cyrillic,
+ Armenian, Hebrew, Devanagari, Thai, Lao, Georgian, Runic, Hiragana,
+ Katakana, Hangul Syllables, and part of Arabic, Bopomofo, CJK Ideogram,
+ and various symbols.
+ .
+ This package contains italic, bold, and italic-bold fonts.  You may
+ want to install xfonts-efont-unicode package for non-itallic medium
+ fonts.

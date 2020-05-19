@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_clean:
+	-@$(MAKE) clean
+	-@rm -rf config.status config.cache config.log Makefile
+	-@find $(CURDIR)/tools -mindepth 1 -name "*.in" -prune -o -name ChangeLog -o \
+	   -exec rm {} \;
+	dh_clean

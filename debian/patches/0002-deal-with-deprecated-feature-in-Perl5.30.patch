@@ -1,0 +1,21 @@
+From: Hideki Yamane <henrich@debian.org>
+Date: Sun, 17 Nov 2019 04:04:30 +0900
+Subject: deal with deprecated feature in Perl5.30
+
+---
+ tools/hex2bdf.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/hex2bdf.in b/tools/hex2bdf.in
+index ed1a59a..69ccc84 100644
+--- a/tools/hex2bdf.in
++++ b/tools/hex2bdf.in
+@@ -14,7 +14,7 @@ $ascent = $pxlsz_y-2;
+ 
+ 
+ while (<>) { $glyph{$1} = $2 if /(.{4,}):(.+)\n/; }
+-@chars = sort keys %glyph; $[ = 1;
++@chars = sort keys %glyph; use Array::Base +1;
+ #dbmopen (%charname, "/usr/share/unicode/unidata/charname.db", 0);
+ 
+ print "STARTFONT 2.1\n";

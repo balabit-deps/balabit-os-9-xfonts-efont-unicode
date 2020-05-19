@@ -1,0 +1,21 @@
+From: Hideki Yamane <henrich@debian.org>
+Date: Sun, 9 Aug 2015 21:01:36 +0900
+Subject: fix "package-contains-timestamped-gzip" warning
+
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 90f1d77..f91d2ed 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -270,7 +270,7 @@ f10.hex: f10_source.hex f10_add.hex
+ ########################################################################
+ 
+ %.pcf.gz: %.bdf
+-	bdftopcf $< | gzip -9c > $@.tmp && \
++	bdftopcf $< | gzip -9c -n > $@.tmp && \
+ 	mv $@.tmp $@
+ %_b.bdf: %.bdf
+ 	tools/mkbold -l $< > $@.tmp && \

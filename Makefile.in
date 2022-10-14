@@ -1,0 +1,303 @@
+NAME = efont-unicode-bdf
+VERSION = 0.4.2
+
+########################################################################
+# source fonts                                                         #
+########################################################################
+
+# The latter is prior than the former.
+
+H24SOURCES = etl24-unicode.hex
+F24SOURCES = taipei24_uni.hex gb24st_uni.hex hanglm24_uni.hex \
+	     jiskan24_uni.hex
+
+H16SOURCES = lao16-mule_uni.hex thai16_uni.hex 8x13.hex \
+	     etl16-unicode.hex
+F16SOURCES = ind16_uni.hex taipei16_uni.hex gb16fs_uni.hex dotum16_uni.hex \
+	     jiskan16-2000-1_uni.hex jiskan16-2000-2_uni.hex \
+	     shinonome16_uni.hex
+
+H14SOURCES = lao14-mule_uni.hex thai14_uni.hex 7x14.hex \
+	     etl14-unicode.hex
+F14SOURCES = dotum14_uni.hex \
+	     K14-1_uni.hex K14-2_uni.hex shinonome14_uni.hex
+
+H12SOURCES = 6x12.hex
+F12SOURCES = gulim12_uni.hex \
+	     K12-1_uni.hex K12-2_uni.hex shinonome12_uni.hex
+
+H10SOURCES = 5x7.hex 5x8.hex @NAGA10_H@
+F10SOURCES = @NAGA10_F@
+
+SOURCEFILES = $(H24SOURCES) $(F24SOURCES) \
+	      $(H16SOURCES) $(F16SOURCES) \
+	      $(H14SOURCES) $(F14SOURCES) \
+	      $(H12SOURCES) $(F12SOURCES) \
+	      $(H10SOURCES) $(F10SOURCES)
+
+BDFFILES = f24.bdf h24.bdf b24.bdf f16.bdf h16.bdf b16.bdf \
+	   f14.bdf h14.bdf b14.bdf f12.bdf h12.bdf b12.bdf \
+	   f10.bdf h10.bdf b10.bdf
+
+HEXFILES = $(BDFFILES:.bdf=.hex)
+PCFFILES = $(BDFFILES:.bdf=.pcf.gz)
+BOLDBDFFILES = $(BDFFILES:.bdf=_b.bdf)
+BOLDPCFFILES = $(BDFFILES:.bdf=_b.pcf.gz)
+ITALICBDFFILES = $(BDFFILES:.bdf=_i.bdf)
+ITALICPCFFILES = $(BDFFILES:.bdf=_i.pcf.gz)
+BOLDITALICBDFFILES = $(BDFFILES:.bdf=_bi.bdf)
+BOLDITALICPCFFILES = $(BDFFILES:.bdf=_bi.pcf.gz)
+
+TOOLS = tools/ChangeLog tools/*.in
+
+SOURCEEXTRA = configure.in configure install-sh Makefile.in Makefile.diff \
+	      johab14.hex h24_add.hex f24_add.hex h16_add.hex f16_add.hex \
+	      h14_add.hex f14_add.hex h12_add.hex f12_add.hex \
+	      h10_add.hex f10_add.hex \
+	      halfwidth.list johab24.hex Blocks.list
+ARCHIVEEXTRA = README README.*[^~] COPYRIGHT ChangeLog INSTALL
+
+all: medium @MAKE_BOLD@ @MAKE_ITALIC@ @MAKE_BOLDITALIC@
+
+bdf: mediumbdf boldbdf italicbdf bolditalicbdf
+pcf: mediumpcf boldpcf italicpcf bolditalicpcf
+
+medium: mediumbdf mediumpcf
+mediumbdf: $(BDFFILES)
+mediumpcf: $(PCFFILES)
+
+bold: boldbdf boldpcf
+boldbdf: $(BOLDBDFFILES)
+boldpcf: $(BOLDPCFFILES)
+
+italic: italicbdf italicpcf
+italicbdf: $(ITALICBDFFILES)
+italicpcf: $(ITALICPCFFILES)
+
+bolditalic: bolditalicbdf bolditalicpcf
+bolditalicbdf: $(BOLDITALICBDFFILES)
+bolditalicpcf: $(BOLDITALICPCFFILES)
+
+diff:
+	$(MAKE) -f Makefile.diff
+
+clean:
+	rm -f *.bdf.tmp *.pcf.gz.tmp
+	rm -f [fh]??_source.hex [bfh]??.hex gb1[^6]_uni.hex
+	rm -f taipei1[^6]_uni.hex [fh]??_half.hex hangul??.hex
+	rm -f gb1[^6]fs_uni.hex K1[^24]-[12]_uni.hex gulim1[^2]_uni.hex
+
+realclean: clean
+	rm -f $(BDFFILES) $(PCFFILES) \
+	rm -f $(BOLDBDFFILES) $(BOLDPCFFILES) \
+	rm -f $(ITALICBDFFILES) $(ITALICPCFFILES) \
+	rm -f $(BOLDITALICBDFFILES) $(BOLDITALICPCFFILES)
+
+source:
+	rm -f $(NAME)-$(VERSION)-src.tar.gz
+	rm -rf $(NAME)-$(VERSION)-src
+	mkdir $(NAME)-$(VERSION)-src/
+	for file in $(SOURCEEXTRA) $(ARCHIVEEXTRA) ; do \
+		cp $$file $(NAME)-$(VERSION)-src/ ; \
+	done
+	for file in $(SOURCEFILES) ; do \
+		cp $$file $(NAME)-$(VERSION)-src/ ; \
+	done
+	mkdir $(NAME)-$(VERSION)-src/tools/
+	for file in $(TOOLS) ; do \
+		cp $$file $(NAME)-$(VERSION)-src/tools/ ; \
+	done
+	tar cf - $(NAME)-$(VERSION)-src/ | \
+		bzip2 -9 > $(NAME)-$(VERSION)-src.tar.bz2
+	rm -rf $(NAME)-$(VERSION)-src
+
+dist: bdf List.html
+	rm -f $(NAME)-$(VERSION).tar.gz
+	rm -rf $(NAME)-$(VERSION)
+	mkdir $(NAME)-$(VERSION)/
+	for file in $(ARCHIVEEXTRA) List.html ; do \
+		cp $$file $(NAME)-$(VERSION)/ ; \
+	done
+	for file in $(BDFFILES) $(BOLDBDFFILES) ; do \
+		cp $$file $(NAME)-$(VERSION)/ ; \
+	done
+	for file in $(ITALICBDFFILES) $(BOLDITALICBDFFILES) ; do \
+		cp $$file $(NAME)-$(VERSION)/ ; \
+	done
+	tar cf - $(NAME)-$(VERSION)/ | \
+		bzip2 -9 > $(NAME)-$(VERSION).tar.bz2
+	rm -rf $(NAME)-$(VERSION)
+
+list: List.html
+List.html: $(HEXFILES)
+	tools/mklisthtml Blocks.list > $@.tmp && \
+	mv $@.tmp $@
+
+########################################################################
+# 24 pixels                                                            #
+########################################################################
+
+h24_source.hex: f24_half.hex $(H24SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f24_source.hex: hangul24.hex $(F24SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+h24.hex: h24_source.hex h24_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f24.hex: f24_source.hex f24_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+########################################################################
+# 16 pixels                                                            #
+########################################################################
+
+h16_source.hex: f16_half.hex $(H16SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f16_source.hex: $(F16SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+h16.hex: h16_source.hex h16_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f16.hex: f16_source.hex f16_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+########################################################################
+# 14 pixels                                                            #
+########################################################################
+
+taipei14_uni.hex: taipei16_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 14/16 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+gb14fs_uni.hex: gb16fs_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 14/16 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+
+h14_source.hex: f14_half.hex $(H14SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f14_source.hex: taipei14_uni.hex gb14fs_uni.hex $(F14SOURCES) hangul14.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+h14.hex: h14_source.hex h14_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f14.hex: f14_source.hex f14_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+########################################################################
+# 12 pixels                                                            #
+########################################################################
+
+taipei12_uni.hex: taipei16_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 12/16 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+gb12fs_uni.hex: gb16fs_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 12/16 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+
+h12_source.hex: f12_half.hex $(H12SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f12_source.hex: taipei12_uni.hex gb12fs_uni.hex K12-1_uni.hex K12-2_uni.hex \
+		$(F12SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+h12.hex: h12_source.hex h12_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f12.hex: f12_source.hex f12_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+########################################################################
+# 10 pixels                                                            #
+########################################################################
+
+taipei10_uni.hex: taipei16_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 10/16 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+gb10fs_uni.hex: gb16fs_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 10/16 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+gulim10_uni.hex: gulim12_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 10/12 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+K10-1_uni.hex: K12-1_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 10/12 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+K10-2_uni.hex: K12-2_uni.hex
+	tools/hex2bdf $< | bdfresize -b 2 -f 10/12 | \
+	tools/bdf2hex > $@.tmp && \
+	mv $@.tmp $@
+
+h10_source.hex: f10_half.hex $(H10SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f10_source.hex: taipei10_uni.hex gb10fs_uni.hex gulim10_uni.hex \
+		K10-1_uni.hex K10-2_uni.hex \
+		$(F10SOURCES)
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+h10.hex: h10_source.hex h10_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+f10.hex: f10_source.hex f10_add.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+########################################################################
+# General Rules                                                        #
+########################################################################
+
+%.pcf.gz: %.bdf
+	bdftopcf $< | gzip -9c > $@.tmp && \
+	mv $@.tmp $@
+%_b.bdf: %.bdf
+	tools/mkbold -l $< > $@.tmp && \
+	mv $@.tmp $@
+%_i.bdf: %.bdf
+	tools/mkitalic $< > $@.tmp && \
+	mv $@.tmp $@
+%_bi.bdf: %_i.bdf
+	tools/mkbold -l $< > $@.tmp && \
+	mv $@.tmp $@
+%_half.hex: %.hex
+	tools/mkhalf halfwidth.list $< > $@.tmp && \
+	mv $@.tmp $@
+hangul%.hex: johab%.hex
+	tools/mkhangul $< > $@.tmp && \
+	mv $@.tmp $@
+%.bdf: %.hex
+	tools/hex2bdf $< > $@.tmp && \
+	mv $@.tmp $@
+	touch -r $< $@
+b%.hex: f%.hex h%.hex
+	tools/hexmerge $^ > $@.tmp && \
+	mv $@.tmp $@
+
+configure: configure.in
+	autoconf
+config.status: configure
+	./config.status --recheck
+Makefile: Makefile.in config.status
+	CONFIG_FILES=$@ ./config.status

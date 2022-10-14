@@ -1,0 +1,131 @@
+2004-09-15  Kazuhiko  <kazuhiko@fdiary.net>
+
+	* shinonome12_uni.hex, shinonome14_uni.hex: sync with
+	shinonome-0.9.11.
+
+2004-09-15  Mike FABIAN <mfabian@suse.de>
+
+	* hex2bdf.in: add more properties to the bdf headers:
+	ADD_STYLE_NAME, PIXEL_SIZE, POINT_SIZE, RESOLUTION_X,
+	RESOLUTION_Y, AVERAGE_WIDTH, _MULE_BASELINE_OFFSET. set
+	_MULE_BASELINE_OFFSET to -3 for all efont-unicode fonts to make
+	them harmonize better with the ETL-fonts from the GNU
+	intlfonts-1.2.1 package.
+
+
+2003-02-16  Mike FABIAN <mfabian@suse.de>
+
+	* hex2bdf.in: add missing properties to the bdf headers: FOUNDRY,
+	FAMILY_NAME, WEIGHT_NAME, SLANT, SETWIDTH_NAME CHARSET_REGISTRY,
+	and CHARSET_ENCODING.  This is necessary to make these fonts work
+	with Xft2.
+
+2002-08-27  Kazuhiko  <kazuhiko@fdiary.net>
+
+	* hex2bdf.in: Support full-width fonts (Thanks to Mike Fabian
+	<mfabian@suse.de>).
+
+2002-03-30  James A. Crippen <james@unlambda.com>
+
+	* mksubfonts.sh: New file.
+	* ucs2any.in: New file. Originally written by Markus Kuhn
+	<mkuhn@acm.org>.
+
+2001-07-11  SHINYAMA Yusuke  <euske@cl.cs.titech.ac.jp>
+
+	* mkitalic.in: small fix treatment white space.
+
+2001-06-10  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* any2ucs.in: Support inputs that is more than 0xffff.
+	* hex2bdf.in: Ditto.
+	* hexmerge: Ditto.
+	* mkjohab.in: Ditto.
+	* mkhangul.in: Ditto.
+
+2001-05-23  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* mklisthtml.in: Modify URI.
+
+2001-05-21  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* mklisthtml.in: New file.
+
+2001-05-20  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* mkjohab.in: New file.
+
+	* mkhangul.in: Fix problem in handling 24px etc.
+
+2001-05-19  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* hex2bdf.in: Modify copyright year.
+
+2001-05-18  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* hex2bdf.in: Fix problem in handling 24px etc.
+	* mkhalf.in: Ditto.
+
+2001-05-10  Kenzi Cano  <kc@ring.gr.jp>
+
+	* hex2bdf.in: XLFD of biwidth changed (-C- > -P-).
+
+2001-05-10  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* hex2bdf.in: Support biwidth input.
+
+2001-05-07  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* any2ucs.in: Read hex data from STDIN.
+
+2001-01-20  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* hexmix.in: New file.
+
+	* hex2bdf.in: Support pixel size larger than 16.
+
+2001-01-15  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* mkitalic.in: Fix typo.
+
+2000-12-02  Kazuhiko <kazuhiko@ring.gr.jp>
+
+	* Change '/usr/bin/perl' to '/usr/bin/env perl'. 
+
+2000-11-28  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* hex2bdf.in: Define 'DEFAULT_CHAR' (suggestion from Kiyokazu SUTO
+	<suto@ks-and-ks.ne.jp>).
+
+	* any2ucs.in: New file.
+
+2000-11-13  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* hex2bdf.in: Read pxlsz_x and pxlsz_y from input HEX file.
+
+	* mkhangul.in: Likewise
+
+	* mkhalf.in: Likewise
+
+	* hexmerge.in: Likewise
+
+	* bdf2hex.in: Output pxlsz_x and pxlsz_y
+
+2000-11-06  Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* hex2bdf-f.in: Output 'COPYRIGHT' information.
+
+	* hex2bdf-h.in: Output 'COPYRIGHT' information.
+
+	* mkhangul.in: New file.  Modify 'johab.pl' so as to support any
+	pixel size.
+
+	* johab-list.pl.in: New file.
+
+2000-10-08 Kazuhiko  <kazuhiko@ring.gr.jp>
+
+	* bdf2bit.in: Change output code to utf-8.
+	* hex2bdf-h.in: Add 'pxlsz' argument. Modify for half widch
+	characters.
+	* hex2bdf-f.in: Add 'pxlsz' argument. Modify for full width
+	characters.

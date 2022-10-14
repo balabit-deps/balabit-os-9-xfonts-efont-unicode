@@ -1,0 +1,99 @@
+000000-00007F: 95: Basic Latin
+000080-0000FF: 96: Latin-1 Supplement
+000100-00017F: 128: Latin Extended-A
+000180-00024F: 178: Latin Extended-B
+000250-0002AF: 94: IPA Extensions
+0002B0-0002FF: 63: Spacing Modifier Letters
+000300-00036F: 82: Combining Diacritical Marks
+000370-0003FF: 112: Greek
+000400-0004FF: 238: Cyrillic
+000530-00058F: 86: Armenian
+000590-0005FF: 82: Hebrew
+000600-0006FF: 206: Arabic
+000700-00074F: 71: Syriac  
+000780-0007BF: 49: Thaana
+000900-00097F: 104: Devanagari
+000980-0009FF: 89: Bengali
+000A00-000A7F: 75: Gurmukhi
+000A80-000AFF: 78: Gujarati
+000B00-000B7F: 79: Oriya
+000B80-000BFF: 61: Tamil
+000C00-000C7F: 80: Telugu
+000C80-000CFF: 80: Kannada
+000D00-000D7F: 78: Malayalam
+000D80-000DFF: 80: Sinhala
+000E00-000E7F: 87: Thai
+000E80-000EFF: 65: Lao
+000F00-000FFF: 193: Tibetan
+001000-00109F: 78: Myanmar 
+0010A0-0010FF: 78: Georgian
+001100-0011FF: 240: Hangul Jamo
+001200-00137F: 345: Ethiopic
+0013A0-0013FF: 85: Cherokee
+001400-00167F: 630: Unified Canadian Aboriginal Syllabics
+001680-00169F: 29: Ogham
+0016A0-0016FF: 81: Runic
+001780-0017FF: 103: Khmer
+001800-0018AF: 155: Mongolian
+001E00-001EFF: 246: Latin Extended Additional
+001F00-001FFF: 233: Greek Extended
+002000-00206F: 83: General Punctuation
+002070-00209F: 28: Superscripts and Subscripts
+0020A0-0020CF: 16: Currency Symbols
+0020D0-0020FF: 20: Combining Marks for Symbols
+002100-00214F: 59: Letterlike Symbols
+002150-00218F: 49: Number Forms
+002190-0021FF: 100: Arrows
+002200-0022FF: 242: Mathematical Operators
+002300-0023FF: 154: Miscellaneous Technical
+002400-00243F: 39: Control Pictures
+002440-00245F: 11: Optical Character Recognition
+002460-0024FF: 139: Enclosed Alphanumerics
+002500-00257F: 128: Box Drawing
+002580-00259F: 22: Block Elements
+0025A0-0025FF: 88: Geometric Shapes
+002600-0026FF: 109: Miscellaneous Symbols
+002700-0027BF: 160: Dingbats
+002800-0028FF: 256: Braille Patterns
+002E80-002EFF: 115: CJK Radicals Supplement
+002F00-002FDF: 214: Kangxi Radicals
+002FF0-002FFF: 12: Ideographic Description Characters
+003000-00303F: 61: CJK Symbols and Punctuation
+003040-00309F: 90: Hiragana
+0030A0-0030FF: 94: Katakana
+003100-00312F: 40: Bopomofo
+003130-00318F: 94: Hangul Compatibility Jamo
+003190-00319F: 16: Kanbun
+0031A0-0031BF: 24: Bopomofo Extended
+003200-0032FF: 202: Enclosed CJK Letters and Months
+003300-0033FF: 249: CJK Compatibility
+003400-004DB5: 6582: CJK Unified Ideographs Extension A
+004E00-009FFF: 20992: CJK Unified Ideographs
+00A000-00A48F: 1165: Yi Syllables
+00A490-00A4CF: 50: Yi Radicals
+00AC00-00D7A3: 11172: Hangul Syllables
+#00D800-00DB7F: 896: High Surrogates
+#00DB80-00DBFF: 128: High Private Use Surrogates
+#00DC00-00DFFF: 1024: Low Surrogates
+#00E000-00F8FF: 6400: Private Use
+00F900-00FAFF: 302: CJK Compatibility Ideographs
+00FB00-00FB4F: 58: Alphabetic Presentation Forms
+00FB50-00FDFF: 593: Arabic Presentation Forms-A
+00FE20-00FE2F: 4: Combining Half Marks
+00FE30-00FE4F: 28: CJK Compatibility Forms
+00FE50-00FE6F: 26: Small Form Variants
+00FE70-00FEFE: 139: Arabic Presentation Forms-B
+#00FEFF-00FEFF: 1: Specials
+00FF00-00FFEF: 223: Halfwidth and Fullwidth Forms
+#00FFF0-00FFFD: 5: Specials
+010300-01032F: 35: Old Italic
+010330-01034F: 27: Gothic
+010400-01044F: 76: Deseret
+01D000-01D0FF: 246: Byzantine Musical Symbols
+01D100-01D1FF: 219: Musical Symbols
+01D400-01D7FF: 991: Mathematical Alphanumeric Symbols
+020000-02A6D6: 42711: CJK Unified Ideographs Extension B
+02F800-02FA1F: 542: CJK Compatibility Ideographs Supplement
+#0E0000-0E007F: 97: Tags
+#0F0000-0FFFFD: 65534: Private Use
+#100000-10FFFD: 65534: Private Use

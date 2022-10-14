@@ -1,0 +1,135 @@
+#!@PERL@
+
+# The base font index for leading consonants
+
+@lconBase= (
+	    1, 11, 21, 31, 41, 51,
+	    61, 71, 81, 91, 101, 111,
+	    121, 131, 141, 151, 161, 171,
+	    181
+	   );
+
+# The base font index for vowels
+
+@vowBase = (
+	    0, 311, 314, 317, 320, 323,		#  (Fill), A, AE, YA, YAE, EO
+	    326, 329, 332, 335, 339, 343,	#  E, YEO, YE, O, WA, WAE
+	    347, 351, 355, 358, 361, 364, 	#  OI, YO, U, WEO, WE, WI
+	    367, 370, 374, 378			#  YU, EU, UI, I
+	   );
+
+# The base font index for trailing consonants
+
+@tconBase = (
+	     # modern trailing consonants (filler + 27)
+	     0,
+	     405, 409, 413, 417, 421,
+	     425, 429, 433, 437, 441,
+	     445, 449, 453, 457, 461,
+	     465, 469, 473, 477, 481,
+	     485, 489, 493, 497, 501,
+	     505, 509
+	    );
+
+# The mapping from vowels to leading consonant type
+# in absence of trailing consonant
+
+@lconMap1 = (
+	     0, 0, 0, 0, 0, 0, 	#  (Fill), A, AE, YA, YAE, EO
+	     0, 0, 0, 1, 3, 3, 	#  E, YEO, YE, O, WA, WAE
+	     3, 1, 2, 4, 4, 4, 	#  OI, YO, U, WEO, WE, WI
+	     2, 1, 3, 0		#  YU, EU, UI, I
+	    );
+
+# The mapping from vowels to leading consonant type
+# in presence of trailing consonant
+
+@lconMap2 = (
+	     5, 5, 5, 5, 5, 5, 	#  (Fill), A, AE, YA, YAE, EO
+	     5, 5, 5, 6, 8, 8, 	#  E, YEO, YE, O, WA, WAE
+	     8, 6, 7, 9, 9, 9, 	#  OI, YO, U, WEO, WE, WI
+	     7, 6, 8, 5		#  YU, EU, UI, I
+	    );
+
+#  vowel type ; 1 = o and its alikes, 0 = others
+
+@vowType = (
+	    0, 0, 0, 0, 0, 0,
+	    0, 0, 0, 1, 1, 1,
+	    1, 1, 0, 0, 0, 0,
+	    0, 1, 1, 0
+	   );
+
+#  The mapping from trailing consonants to vowel type
+
+@tconType = (
+	     0, 1, 1, 1, 2, 1,
+	     1, 1, 1, 1, 1, 1,
+	     1, 1, 1, 1, 1, 1,
+	     1, 1, 1, 1, 1, 1,
+	     1, 1, 1, 1
+	    );
+
+#  The mapping from vowels to trailing consonant type
+
+@tconMap = (
+	    0, 0, 2, 0, 2, 1, 	#  (Fill), A, AE, YA, YAE, EO
+	    2, 1, 2, 3, 0, 0, 	#  E, YEO, YE, O, WA, WAE
+	    0, 3, 3, 1, 1, 1, 	#  OI, YO, U, WEO, WE, WI
+	    3, 3, 0, 1		#  YU, EU, UI, I
+	   );
+
+#  Hangul Jamo (0x1100-0x11FF)
+
+for ( $j=0; $j <= 18; $j++ ) {
+  printf ("%04X:%04X\n", $j+0x1100, $lconBase[$j]+9);
+}
+
+for ( $j=1; $j <= 21; $j++ ) {
+  printf ("%04X:%04X\n", $j+0x1160, $vowBase[$j]+1+$vowType[$j]);
+}
+
+for ( $j=1; $j <= 27; $j++ ) {
+  printf ("%04X:%04X\n", $j+0x11A7, $tconBase[$j]+3);
+}
+
+#  Hangul Syllables (0xAC00-0xD7A3)
+
+for ( $j=0 ; $j <  11172 ;  $j++ ) {
+
+  $init = int( $j / 21 / 28) ;
+  $medial = int($j / 28 ) % 21+1 ; 
+  $final = $j % 28;
+
+  printf ("%04X:", $j+0xAC00);
+  printf ("%04X ", &get_ind($init, $medial, $final, 1));
+  printf ("%04X ", &get_ind($init, $medial, $final, 2));
+  printf ("%04X\n", &get_ind($init, $medial, $final, 3));
+}
+
+sub get_ind
+  {
+    local($l,$m,$f,$wh) = @_;
+
+    # ($l >= 0 && $l < 19 && $m >=0 && $m < 21  && $f >=0 && $f < 28) or 
+    #   die ("$0: get_ind() : invalid Jamo index\n");
+
+    if ( $wh == 1 ) {		# leading consonant index
+      return $lconBase[$l] + 
+	($f > 0 ?  $lconMap2[$m] : $lconMap1[$m] ) ;
+    } elsif ( $wh == 2 ) {	# medial vowel index
+
+      $ind = $vowBase[$m];
+      if ( $vowType[$m] == 1 ) {
+	# For vowels 'o' and alikes,
+	# Giyeok and Kieuk get special treatment
+	$ind += ( ($l==0 || $l == 15) ? 0 : 1)
+	  + ($f > 0 ? 2 : 0 );
+      } else {
+	$ind+= $tconType[$f];
+      }
+      return $ind;
+    } else {
+      return  $f ? $tconBase[$f] + $tconMap[$m] : 0;
+    }
+  }

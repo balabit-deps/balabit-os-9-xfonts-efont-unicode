@@ -1,0 +1,74 @@
+#!@PERL@
+#
+# Copyright (C) 2000  Kazuhiko Shiozaki
+#
+# SYNTAX
+#     perl mkhalf.pl halfwidth.list < input.hex
+
+require 5.005;
+
+use FileHandle;
+
+# 00 -> 0, 01 -> 1, 10 -> 1, 11 -> 1
+my @conv_table_4 = ( 0, 1, 1, 1, 2, 3, 3, 3, 2, 3, 3, 3, 2, 3, 3, 3);
+# 00 -> 0, 01 -> 0, 10 -> 1, 11 -> 1
+# my @conv_table_4 = ( 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3);
+
+my @conv_table_8;
+
+for (my $i=0; $i<16; $i++) {
+  for (my $j=0; $j<16; $j++) {
+    $conv_table_8[$i * 16 + $j] = $conv_table_4[$i] * 4 + $conv_table_4[$j];
+  }
+}
+
+my $list_file = shift;
+
+my $handle_list = FileHandle->new();
+if (!$handle_list->open("$list_file", 'r')) {
+  die "failed to open the file: $list_file\n";
+}
+
+my %list;
+while ($_ = $handle_list->getline) {
+  chomp;
+  $list{$_} = 1;
+}
+
+close $handle_list;
+
+$_ = <>;
+if (/^(\d+)\s+(\d+)/) {
+  $pxlsz_x = $1 / 2;
+  $pxlsz_y = $2;
+} else {
+  die;
+}
+print "$pxlsz_x $pxlsz_y\n";
+
+$len = int(($pxlsz_y - 1) / 8 + 1);
+if ($len % 2 == 1) {
+  $suffix = "0";
+} else {
+  $suffix = "";
+}
+
+while (<>) {
+  if (/^([0-9A-F]{4}):([0-9A-F]+)$/) {
+    my $code = $1;
+    my $data = $2;
+    if ($list{$code}) {
+      print "$code:";
+      $count = 1;
+      foreach (split(/(..)/, $data)) {
+	if ($_) {
+	  printf("%X", $conv_table_8[hex($_)]);
+	  if ($count++ % $len == 0) {
+	    print "$suffix";
+	  }
+	}
+      }
+      print "\n";
+    }
+  }
+}

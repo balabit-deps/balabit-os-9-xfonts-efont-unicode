@@ -1,0 +1,13 @@
+#!@PERL@
+
+$_ = <>;
+if (/^(\d+)\s+(\d+)/) {
+  $pxlsz_x = $1;
+  $pxlsz_y = $2;
+  print "$pxlsz_x $pxlsz_y\n";
+} else {
+  die;
+}
+
+while (<>) { $G{$1}=$2 if /(....):(.+)\n/; }
+for (sort keys %G) { print "$_:$G{$_}\n"; }

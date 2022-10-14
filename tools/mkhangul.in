@@ -1,0 +1,196 @@
+#!@PERL@
+
+# Usage:
+#  mkhangul.pl < JOHAB_HEX_FILE
+
+# This script(working as filter) converts  Hangul "Johab encoded  fonts"
+# with an unofficial XLFD name "-johab" in BDF format
+# to UCS-2 encoded font in HEX format.
+
+#  Made by
+#  Sep. 29, 1998
+#  Jungshik Shin <jshin@pantheon.yale.edu>
+#
+#  Modified by
+#  May. 20, 2001
+#  Kazuhiko <kazuhiko@ring.gr.jp>
+
+# A more complete routine which not only covers
+# *modern* pre-composed Hangul syllables in UAC00-UD7A3
+# but also supports dynamic rendering of
+# Hangul syllables(medivial as well as modern)
+# using Hangul comibining Jamos  at [U1100-U11FF]
+# was made by Deog-tae Kim <dtkim@calab.kaist.ac.kr>
+# to be used in Java font-properties file.
+# It's available at  http://calab.kaist.ac.kr/~dtkim/java/
+
+# Conversion routine from Hangul Jamo index to glyph index
+# of Hangul "Johab-encoded" fonts  as used by
+# Hangul xterm, hanterm.
+# The following routine is based on Hanterm by Song, Jaekyung
+# available at ftp://ftp.kaist.ac.kr/hangul/terminal/hanterm
+
+$_ = <>;
+if (/^(\d+)\s+(\d+)/) {
+  $pxlsz = $2;
+  print "$pxlsz $pxlsz\n";
+} else {
+  die;
+}
+
+# The base font index for leading consonants
+
+@lconBase= (
+	    1, 11, 21, 31, 41, 51,
+	    61, 71, 81, 91, 101, 111,
+	    121, 131, 141, 151, 161, 171,
+	    181
+	   );
+
+# The base font index for vowels
+
+@vowBase = (
+	    0, 311, 314, 317, 320, 323,		#  (Fill), A, AE, YA, YAE, EO
+	    326, 329, 332, 335, 339, 343,	#  E, YEO, YE, O, WA, WAE
+	    347, 351, 355, 358, 361, 364, 	#  OI, YO, U, WEO, WE, WI
+	    367, 370, 374, 378			#  YU, EU, UI, I
+	   );
+
+# The base font index for trailing consonants
+
+@tconBase = (
+	     # modern trailing consonants (filler + 27)
+	     0,
+	     405, 409, 413, 417, 421,
+	     425, 429, 433, 437, 441,
+	     445, 449, 453, 457, 461,
+	     465, 469, 473, 477, 481,
+	     485, 489, 493, 497, 501,
+	     505, 509
+	    );
+
+# The mapping from vowels to leading consonant type
+# in absence of trailing consonant
+
+@lconMap1 = (
+	     0, 0, 0, 0, 0, 0, 	#  (Fill), A, AE, YA, YAE, EO
+	     0, 0, 0, 1, 3, 3, 	#  E, YEO, YE, O, WA, WAE
+	     3, 1, 2, 4, 4, 4, 	#  OI, YO, U, WEO, WE, WI
+	     2, 1, 3, 0		#  YU, EU, UI, I
+	    );
+
+# The mapping from vowels to leading consonant type
+# in presence of trailing consonant
+
+@lconMap2 = (
+	     5, 5, 5, 5, 5, 5, 	#  (Fill), A, AE, YA, YAE, EO
+	     5, 5, 5, 6, 8, 8, 	#  E, YEO, YE, O, WA, WAE
+	     8, 6, 7, 9, 9, 9, 	#  OI, YO, U, WEO, WE, WI
+	     7, 6, 8, 5		#  YU, EU, UI, I
+	    );
+
+#  vowel type ; 1 = o and its alikes, 0 = others
+
+@vowType = (
+	    0, 0, 0, 0, 0, 0,
+	    0, 0, 0, 1, 1, 1,
+	    1, 1, 0, 0, 0, 0,
+	    0, 1, 1, 0
+	   );
+
+#  The mapping from trailing consonants to vowel type
+
+@tconType = (
+	     0, 1, 1, 1, 2, 1,
+	     1, 1, 1, 1, 1, 1,
+	     1, 1, 1, 1, 1, 1,
+	     1, 1, 1, 1, 1, 1,
+	     1, 1, 1, 1
+	    );
+
+#  The mapping from vowels to trailing consonant type
+
+@tconMap = (
+	    0, 0, 2, 0, 2, 1, 	#  (Fill), A, AE, YA, YAE, EO
+	    2, 1, 2, 3, 0, 0, 	#  E, YEO, YE, O, WA, WAE
+	    0, 3, 3, 1, 1, 1, 	#  OI, YO, U, WEO, WE, WI
+	    3, 3, 0, 1		#  YU, EU, UI, I
+	   );
+
+# read in BITMAP patterns for Jamos from JOHAB-encoded BDF font file
+# thru STDIN
+
+while (<>) {
+  if (/^(.+):(.*)/) {
+    $jamo[hex($1)] = $2;
+  }
+}
+
+my $len = int(($pxlsz - 1) / 8 + 1);
+my $bitlength = $pxlsz * $len * 2;
+
+for ( $j=0; $j <= 18; $j++ ) {
+  printf ("%04X:%${bitlength}s\n", $j+0x1100, $jamo[$lconBase[$j]+9]);
+}
+
+for ( $j=1; $j <= 21; $j++ ) {
+  printf ("%04X:%${bitlength}s\n", $j+0x1160, $jamo[$vowBase[$j]+1+$vowType[$j]]);
+}
+
+for ( $j=1; $j <= 27; $j++ ) {
+  printf ("%04X:%${bitlength}s\n", $j+0x11A7, $jamo[$tconBase[$j]+3]);
+}
+
+for ( $j=0 ; $j <  11172 ;  $j++ ) {
+
+  $init = int( $j / 21 / 28) ;
+  $medial = int($j / 28 ) % 21+1 ;
+  $final = $j % 28;
+
+  printf ("%04X:%${bitlength}s\n", $j+0xAC00, &compose_hangul($init,$medial,$final));
+
+}
+
+sub compose_hangul
+  {
+    local($l,$m,$f) = @_;
+
+    @l_bit = unpack("a2" x ($pxlsz * $len), $jamo[&get_ind($l,$m,$f,1)]);
+    @m_bit = unpack("a2" x ($pxlsz * $len), $jamo[&get_ind($l,$m,$f,2)]);
+    @f_bit = unpack("a2" x ($pxlsz * $len), $jamo[&get_ind($l,$m,$f,3)]);
+
+    for ( $i = 0; $i < $pxlsz * $len; $i++) {
+      $bit[$i]=sprintf("%02X",
+		       hex($l_bit[$i]) | hex($m_bit[$i]) | hex($f_bit[$i]) );
+    }
+
+    return pack("a2" x ($pxlsz * $len), @bit );
+
+  }
+
+sub get_ind
+  {
+    local($l,$m,$f,$wh) = @_;
+
+    # ($l >= 0 && $l < 19 && $m >=0 && $m < 21  && $f >=0 && $f < 28) or
+    #   die ("$0: get_ind() : invalid Jamo index\n");
+
+    if ( $wh == 1 ) {		# leading consonant index
+      return $lconBase[$l] +
+	($f > 0 ?  $lconMap2[$m] : $lconMap1[$m] ) ;
+    } elsif ( $wh == 2 ) {	# medial vowel index
+
+      $ind = $vowBase[$m];
+      if ( $vowType[$m] == 1 ) {
+	# For vowels 'o' and alikes,
+	# Giyeok and Kieuk get special treatment
+	$ind += ( ($l==0 || $l == 15) ? 0 : 1)
+	  + ($f > 0 ? 2 : 0 );
+      } else {
+	$ind+= $tconType[$f];
+      }
+      return $ind;
+    } else {
+      return  $f ? $tconBase[$f] + $tconMap[$m] : 0;
+    }
+  }

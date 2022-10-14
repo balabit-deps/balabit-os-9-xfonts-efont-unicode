@@ -1,0 +1,74 @@
+#!@GAWK@ -f
+BEGIN {
+    flag = 0;
+}
+/^BITMAP/ {
+    flag = 1;
+    n = 0;
+    print $0;
+    next;
+}
+/^BBX[ \t]/ {
+    h = $3;
+}
+
+
+/^ENDCHAR/ {
+    flag = 0;
+    if (n != 0) {
+      if (c > 31 && c < 128)
+	printf($0 " # %c\n",c);
+      else if (c < 2048)
+	printf($0 " # %c%c\n", 192 + c / 64 , 128 + c % 64);
+      else if (c < 65536)
+	printf($0 " # %c%c%c\n", 224 + c / 4096 , 128 + (c % 4096) / 64 , 128 + c % 64);
+      else
+	printf($0 "\n");
+
+    } else
+      printf($0 "\n");
+    next;
+}
+
+/^ENCODING[ \t]/ {
+  c = $2;
+}
+
+/^BBX[ \t]/ {
+    w = $2;
+}
+
+/^STARTCHAR[ \t]/ {
+    if ($2 ~ /^char/) {
+	sub(/char/, "", $2);
+	printf( $1 " %x\n", $2)
+    }
+    else
+	print $0;
+    next;
+}
+
+{
+    if (flag == 1) {
+	gsub(/0/, "....");
+	gsub(/1/, "...@");
+	gsub(/2/, "..@.");
+	gsub(/3/, "..@@");
+	gsub(/4/, ".@..");
+	gsub(/5/, ".@.@");
+	gsub(/6/, ".@@.");
+	gsub(/7/, ".@@@");
+	gsub(/8/, "@...");
+	gsub(/9/, "@..@");
+	gsub(/A|a/, "@.@.");
+	gsub(/B|b/, "@.@@");
+	gsub(/C|c/, "@@..");
+	gsub(/D|d/, "@@.@");
+	gsub(/E|e/, "@@@.");
+	gsub(/F|f/, "@@@@");
+        if(n == 0) n = index( $0, "@");
+	print substr($0, 0, w);
+    } else
+	print $0;
+
+}

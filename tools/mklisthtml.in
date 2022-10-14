@@ -1,0 +1,211 @@
+#!@PERL@
+# (c) Copyright 2001 /efont/ The Electronic Font Open Laboratory.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#
+# SYNTAX
+#     mklisthtml Blocks.list > list.html
+#
+#     (NOTE: b10.hex, b12.hex, b14.hex, b16.hex and b24.hex are required.)
+
+require 5.005;
+
+# use English;
+use FileHandle;
+
+my $table_file = shift;
+
+my $handle_table = FileHandle->new();
+if (!$handle_table->open("$table_file", 'r')) {
+  die "failed to open the file: $table_file\n";
+}
+
+my @start = ();
+my @end = ();
+my @desc = ();
+my @num = ();
+my $i = 0;
+
+while ($_ = $handle_table->getline) {
+  if (/^([0-9a-fA-F]+)-([0-9a-fA-F]+): ([0-9]+): (.*)/) {
+    $start[$i] = hex($1);
+    $end[$i] = hex($2);
+    $num[$i] = $3;
+    $desc[$i] = $4;
+    $i++;
+  }
+}
+
+close $handle_table;
+
+my $file = "b10.hex";
+my $handle = FileHandle->new();
+if (!$handle->open("$file", 'r')) {
+  die "failed to open the file: $file\n";
+}
+while ($_ = $handle->getline) {
+  if (/^([0-9a-fA-F]+):/) {
+    my $code = hex($1);
+    for (my $j = 0; $j < $i; $j++) {
+      if (($start[$j] <= $code) && ($code <= $end[$j])) {
+	$num10[$j]++;
+      }
+    }
+  }
+}
+close $handle;
+
+my $file = "b12.hex";
+my $handle = FileHandle->new();
+if (!$handle->open("$file", 'r')) {
+  die "failed to open the file: $file\n";
+}
+while ($_ = $handle->getline) {
+  if (/^([0-9a-fA-F]+):/) {
+    my $code = hex($1);
+    for (my $j = 0; $j < $i; $j++) {
+      if (($start[$j] <= $code) && ($code <= $end[$j])) {
+	$num12[$j]++;
+      }
+    }
+  }
+}
+close $handle;
+
+my $file = "b14.hex";
+my $handle = FileHandle->new();
+if (!$handle->open("$file", 'r')) {
+  die "failed to open the file: $file\n";
+}
+while ($_ = $handle->getline) {
+  if (/^([0-9a-fA-F]+):/) {
+    my $code = hex($1);
+    for (my $j = 0; $j < $i; $j++) {
+      if (($start[$j] <= $code) && ($code <= $end[$j])) {
+	$num14[$j]++;
+      }
+    }
+  }
+}
+close $handle;
+
+my $file = "b16.hex";
+my $handle = FileHandle->new();
+if (!$handle->open("$file", 'r')) {
+  die "failed to open the file: $file\n";
+}
+while ($_ = $handle->getline) {
+  if (/^([0-9a-fA-F]+):/) {
+    my $code = hex($1);
+    for (my $j = 0; $j < $i; $j++) {
+      if (($start[$j] <= $code) && ($code <= $end[$j])) {
+	$num16[$j]++;
+      }
+    }
+  }
+}
+close $handle;
+
+my $file = "b24.hex";
+my $handle = FileHandle->new();
+if (!$handle->open("$file", 'r')) {
+  die "failed to open the file: $file\n";
+}
+while ($_ = $handle->getline) {
+  if (/^([0-9a-fA-F]+):/) {
+    my $code = hex($1);
+    for (my $j = 0; $j < $i; $j++) {
+      if (($start[$j] <= $code) && ($code <= $end[$j])) {
+	$num24[$j]++;
+      }
+    }
+  }
+}
+close $handle;
+
+print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta http-equiv="CONTENT-TYPE" content="text/html; charset=ISO-2022-JP">
+    <link rev="made" href="mailto:kazuhiko@ring.gr.jp">
+    <title>Unicode Font from /efont/</title>
+  </head>
+  <body bgcolor="#ffffff" text="#000000" link="#404080" vlink="#804080"
+  alink="#804080">
+  <h3>development status of <a href="http://openlab.ring.gr.jp/efont/unicode//">/efont/ unicode bdf fonts</a></h3>
+    <ul>
+      <li>[FA]:fully available,</li>
+      <li>[P-]:partially available,</li>
+      <li>[--]:not available at all,</li>
+    </ul>
+  <center>
+    <table border="1">
+      <tr><td>Char Code</td><td>Description</td><td>10</td><td>12</td><td>14</td><td>16</td><td>24</td></tr>
+';
+
+my $result10;
+my $result12;
+my $result14;
+my $result14;
+my $result16;
+my $result24;
+for (my $j = 0; $j < $i; $j++) {
+  if ($num10[$j] == 0) {
+    $result10 = "--";
+  } elsif ($num10[$j] >= $num[$j]) {
+    $result10 = "FA";
+  } else {
+    $result10 = "P-";
+  }
+  if ($num12[$j] == 0) {
+    $result12 = "--";
+  } elsif ($num12[$j] >= $num[$j]) {
+    $result12 = "FA";
+  } else {
+    $result12 = "P-";
+  }
+  if ($num14[$j] == 0) {
+    $result14 = "--";
+  } elsif ($num14[$j] >= $num[$j]) {
+    $result14 = "FA";
+  } else {
+    $result14 = "P-";
+  }
+  if ($num16[$j] == 0) {
+    $result16 = "--";
+  } elsif ($num16[$j] >= $num[$j]) {
+    $result16 = "FA";
+  } else {
+    $result16 = "P-";
+  }
+  if ($num24[$j] == 0) {
+    $result24 = "--";
+  } elsif ($num24[$j] >= $num[$j]) {
+    $result24 = "FA";
+  } else {
+    $result24 = "P-";
+  }
+  printf("      <tr><td>%06X-%06X</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n", $start[$j], $end[$j], $desc[$j], $result10, $result12, $result14, $result16, $result24);
+}
+print '    </table>
+  </center>
+    <hr>
+    <div>
+      <a href="http://openlab.ring.gr.jp/efont/">/efont/ open laboratory</a>
+    </div>
+    <address>
+      Copyright (C) 2000-2001 Kazuhiko &lt;kazuhiko@ring.gr.jp&gt;<br>
+      Copyright (C) 2000-2001 Kenzi Cano &lt;kc@ring.gr.jp&gt;
+    </address>
+  </body>
+</html>
+';

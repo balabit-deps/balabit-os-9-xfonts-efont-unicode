@@ -1,0 +1,78 @@
+#!@PERL@
+#
+# Copyright (C) 2001  Kazuhiko Shiozaki
+#
+# SYNTAX
+#     perl hexmix.pl -a|-o <source1.hex> <source2.hex>
+#        -a : AND operation
+#        -o : OR operation
+
+require 5.005;
+
+use FileHandle;
+use strict;
+
+my $op = shift;
+if (($op ne "-a") && ($op ne "-o")) {
+  die "invalid operation: $op\n";
+}
+
+my $source1 = shift;
+my $source2 = shift;
+
+my $handle1 = FileHandle->new();
+if (!$handle1->open("$source1", 'r')) {
+  die "failed to open the file: $source1\n";
+}
+my $handle2 = FileHandle->new();
+if (!$handle2->open("$source2", 'r')) {
+  die "failed to open the file: $source2\n";
+}
+
+my %table1 = ();
+my %table2 = ();
+
+my $header1 = $handle1->getline;
+my $header2 = $handle2->getline;
+
+if ($header1 ne $header2) {
+  die "different size\n$header1\n$header2\n";
+}
+print "$header1";
+
+while ($_ = $handle1->getline) {
+  if (/^([0-9a-fA-F]{4}):([0-9a-fA-F]+)/) {
+    $table1{uc($1)} = uc($2);
+  }
+}
+while ($_ = $handle2->getline) {
+  if (/^([0-9a-fA-F]{4}):([0-9a-fA-F]+)/) {
+    my $code = uc($1);
+    $table2{$code} = uc($2);
+    $table1{$code} .= ""
+  }
+}
+
+close $handle1;
+close $handle2;
+
+foreach (sort keys %table1) {
+  my $glyph1 = $table1{$_};
+  my $glyph2 = $table2{$_};
+  if (!$glyph1) {
+    $glyph1 = $glyph2;
+  }
+  my @byte1 = split(//, $glyph1);
+  my @byte2 = split(//, $glyph2);
+  my $i = 0;
+  my $glyph3 = "";
+  while ($byte1[$i] ne "") {
+    if ($op eq "-a") {
+      $glyph3 .= sprintf("%X", hex($byte1[$i]) & hex($byte2[$i]));
+    } else {
+      $glyph3 .= sprintf("%X", hex($byte1[$i]) | hex($byte2[$i]));
+    }
+    $i++;
+  }
+  print "$_:$glyph3\n";
+}

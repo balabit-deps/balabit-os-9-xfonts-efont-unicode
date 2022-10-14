@@ -1,0 +1,19 @@
+BDFFILES = h16.bdf f16.bdf \
+	   h14.bdf f14.bdf \
+	   h12.bdf f12.bdf \
+	   h10.bdf f10.bdf
+
+HEXFILES = $(BDFFILES:.bdf=.hex)
+
+ADDFILES = $(HEXFILES:.hex=_add.hex)
+ADDFILES += johab14.hex johab24.hex
+
+all: $(ADDFILES)
+
+%.hex: %.bdf
+	tools/bdf2hex $< > $@
+	touch -r $< $@
+%_add.hex: %_source.hex %.hex
+	head -1 $< > $@
+	diff -u $^ | grep '^+....:' | sed 's/^.//' >> $@
+	touch -r $< $@

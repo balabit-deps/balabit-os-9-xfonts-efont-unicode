@@ -1,0 +1,54 @@
+#!@PERL@
+# (c) Copyright 2000-2001 /efont/ The Electronic Font Open Laboratory.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#
+# SYNTAX
+#     any2ucs convert_table < input_file
+
+require 5.005;
+
+# use English;
+use FileHandle;
+use strict;
+
+my $table_file = shift;
+
+my $handle_table = FileHandle->new();
+if (!$handle_table->open("$table_file", 'r')) {
+  die "failed to open the file: $table_file\n";
+}
+
+my %table = ();
+
+while ($_ = $handle_table->getline) {
+  if (/^0x([0-9A-F]{4,})\t+0x([0-9A-F]{4,})/) {
+    $table{uc($1)} = uc($2);
+  }
+}
+
+close $handle_table;
+
+$_ = <>;
+if (/^(\d+)\s+(\d+)/) {
+  print "$1 $2\n";
+} else {
+  die;
+}
+
+while (<>) {
+  if (/^(.{4,}):(.+)$/) {
+    if ($table{$1}) {
+      print "$table{$1}:$2\n";
+    }
+  }
+}

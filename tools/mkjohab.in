@@ -1,0 +1,59 @@
+#!@PERL@
+# Copyright (C) 2000  Kazuhiko Shiozaki
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# SYNTAX
+#     mkjohab johab-list < input_hex_file
+#
+# (NOTE) johab-list can be made with the following:
+#    johab-list.pl > johab-list
+
+require 5.005;
+
+# use English;
+use FileHandle;
+use strict;
+
+my $table_file = shift;
+
+my $handle_table = FileHandle->new();
+if (!$handle_table->open("$table_file", 'r')) {
+  die "failed to open the file: $table_file\n";
+}
+
+my %table = ();
+
+while ($_ = $handle_table->getline) {
+  if (/^(.{4,}):(.*)$/) {
+    $table{uc($1)} = uc($2);
+  }
+}
+
+close $handle_table;
+
+$_ = <>;
+if (/^(\d+)\s+(\d+)/) {
+  print "$1 $2\n";
+} else {
+  die;
+}
+
+while (<>) {
+  if (/^(....):(.*)$/) {
+    if ($table{$1}) {
+      my $glyph = $2;
+      foreach my $code (split(/ /, $table{$1})) {
+	print "$code:$glyph\n";
+      }
+    }
+  }
+}

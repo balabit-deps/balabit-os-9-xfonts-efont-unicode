@@ -1,0 +1,79 @@
+#!@PERL@
+
+$_ = <>;
+if (/^(\d+)\s+(\d+)/) {
+  $pxlsz_x = $1;
+  $pxlsz_y = $2;
+} else {
+  die;
+}
+
+$ptSz = $pxlsz_y * 10;
+$avgWdth = $pxlsz_y * 5;
+$ascent = $pxlsz_y-2;
+
+
+while (<>) { $glyph{$1} = $2 if /(.{4,}):(.+)\n/; }
+@chars = sort keys %glyph; $[ = 1;
+#dbmopen (%charname, "/usr/share/unicode/unidata/charname.db", 0);
+
+print "STARTFONT 2.1\n";
+if ($pxlsz_x == $pxlsz_y) {
+  if ($ARGV =~ /^f/) {
+    $avgWdth = $avgWdth * 2;
+    print "FONT -Efont-Fixed-Medium-R-Normal--$pxlsz_y-$ptSz-75-75-C-$avgWdth-ISO10646-1\n";
+    $family_name = "Fixed";
+  } else {
+    print "FONT -Efont-Biwidth-Medium-R-Normal--$pxlsz_y-$ptSz-75-75-P-$avgWdth-ISO10646-1\n";
+    $family_name = "Biwidth";
+  }
+  $default_char = 0x3000; # IDEOGRAPHIC SPACE
+} else {
+  print "FONT -Efont-Fixed-Medium-R-Normal--$pxlsz_y-$ptSz-75-75-C-$avgWdth-ISO10646-1\n";
+  $family_name = "Fixed";
+  $default_char = 0x0020; # SPACE
+}
+print "SIZE $pxlsz_y 75 75
+FONTBOUNDINGBOX $pxlsz_x $pxlsz_y 0 -2
+STARTPROPERTIES 18
+COPYRIGHT \"(c) Copyright 2000-2003 /efont/ The Electronic Font Open Laboratory.\"
+FOUNDRY \"Efont\"
+FAMILY_NAME \"$family_name\"
+WEIGHT_NAME \"Medium\"
+SLANT \"R\"
+SETWIDTH_NAME \"Normal\"
+ADD_STYLE_NAME \"\"
+PIXEL_SIZE $pxlsz_y
+POINT_SIZE $ptSz
+RESOLUTION_X 75
+RESOLUTION_Y 75
+AVERAGE_WIDTH $avgWdth
+CHARSET_REGISTRY \"ISO10646\"
+CHARSET_ENCODING \"1\"
+_MULE_BASELINE_OFFSET -3
+FONT_ASCENT $ascent
+FONT_DESCENT 2
+DEFAULT_CHAR $default_char
+ENDPROPERTIES
+CHARS $#chars\n";
+
+foreach $character (@chars) {
+  $encoding = hex($character); $glyph = $glyph{$character};
+  $len = int(($pxlsz_y - 1) / 8 + 1);
+  $aspect = length($glyph) < $len * $pxlsz_y * 2 ? .5 : 1;
+  $width = length($glyph) / $pxlsz_y / 2;
+  $swidth = 1000 * $aspect;
+  $dwidth = $pxlsz_y * $aspect;
+  $glyph =~ s/((..){$width})/\n$1/g;
+  $character = "$character $charname"
+    if $charname = $charname{pack("n",hex($character))};
+  print "STARTCHAR U+$character
+ENCODING $encoding
+SWIDTH $swidth 0
+DWIDTH $dwidth 0
+BBX $dwidth $pxlsz_y 0 -2
+BITMAP $glyph
+ENDCHAR\n";
+}
+
+print "ENDFONT\n";
